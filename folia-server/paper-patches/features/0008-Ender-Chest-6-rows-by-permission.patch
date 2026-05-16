@@ -1,0 +1,44 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: koboshchan <lucaszhang1001@gmail.com>
+Date: Fri, 15 May 2026 23:11:10 -0700
+Subject: [PATCH] Ender Chest: 6 rows by permission
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java
+index 2f41a92465b9da28e026297cc3528898bb1c8412..d4394beef59b2f8564ba16d169ff587325c47338 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftContainer.java
+@@ -148,9 +148,20 @@ public class CraftContainer extends AbstractContainerMenu {
+             case PLAYER:
+             case CHEST:
+             case ENDER_CHEST:
++                // Folia start - Barrels and enderchests 6 rows
++                this.delegate = new ChestMenu(switch (top.getContainerSize() / 9) {
++                    case 6 -> net.minecraft.world.inventory.MenuType.GENERIC_9x6;
++                    case 5 -> net.minecraft.world.inventory.MenuType.GENERIC_9x5;
++                    case 4 -> net.minecraft.world.inventory.MenuType.GENERIC_9x4;
++                    case 2 -> net.minecraft.world.inventory.MenuType.GENERIC_9x2;
++                    case 1 -> net.minecraft.world.inventory.MenuType.GENERIC_9x1;
++                    default -> net.minecraft.world.inventory.MenuType.GENERIC_9x3;
++                }, windowId, bottom, top, top.getContainerSize() / 9);
++                break;
+             case BARREL:
+                 this.delegate = new ChestMenu(net.minecraft.world.inventory.MenuType.GENERIC_9x3, windowId, bottom, top, top.getContainerSize() / 9);
+                 break;
++                // Folia end - Barrels and enderchests 6 rows
+             case DISPENSER:
+             case DROPPER:
+                 this.delegate = new DispenserMenu(windowId, bottom, top);
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
+index 9d5fe6fc727948955d89f9ed5e181185393a9611..14aa5eb35776f52a943af611e9f1a4e54c9d0cb4 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
+@@ -45,7 +45,7 @@ public class CraftInventory implements Inventory {
+ 
+     @Override
+     public int getSize() {
+-        return this.getInventory().getContainerSize();
++        return this.getInventory().getContainerSize(); // Folia - Barrels and enderchests 6 rows
+     }
+ 
+     @Override
