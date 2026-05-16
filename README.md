@@ -6,6 +6,8 @@
 
 ## Overview
 
+Just folia with native purpur 6 rows ender chest.
+
 Folia groups nearby loaded chunks to form an "independent region."
 See [the PaperMC documentation](https://docs.papermc.io/folia/reference/region-logic) for exact details on how Folia
 will group nearby chunks.
