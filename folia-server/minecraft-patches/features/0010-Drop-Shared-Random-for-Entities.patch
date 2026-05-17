@@ -1,0 +1,54 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: koboshchan <lucaszhang1001@gmail.com>
+Date: Sun, 17 May 2026 16:17:51 -0700
+Subject: [PATCH] Drop Shared Random for Entities
+
+
+diff --git a/net/minecraft/world/entity/Entity.java b/net/minecraft/world/entity/Entity.java
+index a298b9babb6b42ff31781808821acd28918d7cb7..71ca732d82d130df982721726d78ab8e66d67460 100644
+--- a/net/minecraft/world/entity/Entity.java
++++ b/net/minecraft/world/entity/Entity.java
+@@ -159,34 +159,6 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
+         return input.getIntOr("Bukkit.updateLevel", CURRENT_LEVEL) >= level;
+     }
+ 
+-    // Paper start - Share random for entities to make them more random
+-    public static RandomSource SHARED_RANDOM = io.papermc.paper.threadedregions.util.ThreadLocalRandomSource.INSTANCE; // Folia - region threading
+-    // Paper start - replace random
+-    private static final class RandomRandomSource extends ca.spottedleaf.moonrise.common.util.ThreadUnsafeRandom {
+-        public RandomRandomSource() {
+-            this(net.minecraft.world.level.levelgen.RandomSupport.generateUniqueSeed());
+-        }
+-
+-        public RandomRandomSource(long seed) {
+-            super(seed);
+-        }
+-
+-        // Paper end - replace random
+-        private boolean locked = false;
+-
+-        @Override
+-        public synchronized void setSeed(long seed) {
+-            if (locked) {
+-                LOGGER.error("Ignoring setSeed on Entity.SHARED_RANDOM", new Throwable());
+-            } else {
+-                super.setSeed(seed);
+-                locked = true;
+-            }
+-        }
+-
+-        // Paper - replace random
+-    }
+-    // Paper end - Share random for entities to make them more random
+     public org.bukkit.event.entity.CreatureSpawnEvent.@Nullable SpawnReason spawnReason; // Paper - Entity#getEntitySpawnReason
+ 
+     private volatile org.bukkit.craftbukkit.entity.@Nullable CraftEntity bukkitEntity; // Paper - Folia schedulers - volatile
+@@ -283,7 +255,7 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
+     public double yOld;
+     public double zOld;
+     public boolean noPhysics;
+-    public final RandomSource random = SHARED_RANDOM; // Paper - Share random for entities to make them more random
++    public final RandomSource random = RandomSource.create();
+     public int tickCount;
+     private int remainingFireTicks;
+     public boolean wasTouchingWater;
